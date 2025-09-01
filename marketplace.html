@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNDICATE Marketplace - Premium AI Segments</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Comfortaa:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: #000000;
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Layers */
+        .bg-layer-1 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at top, #1a1a1a 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, #0f0f0f 0%, transparent 50%),
+                linear-gradient(180deg, #000000 0%, #1c1c1c 100%);
+            z-index: -3;
+        }
+
+        .bg-layer-2 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(150, 150, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(200, 200, 200, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(180, 180, 180, 0.08) 0%, transparent 50%);
+            animation: ocean-flow 20s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        .bg-layer-3 {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.2), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(200, 200, 200, 0.15), transparent),
+                radial-gradient(1px 1px at 90% 10%, rgba(150, 150, 150, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: float-particles 15s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes ocean-flow {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+            33% { transform: translateY(-20px) translateX(10px) scale(1.02); }
+            66% { transform: translateY(20px) translateX(-10px) scale(0.98); }
+        }
+
+        @keyframes float-particles {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100vh); }
+        }
+
+        /* Grid Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+            animation: grid-fade 10s ease-in-out infinite;
+        }
+
+        @keyframes grid-fade {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ffffff 0%, #c0c0c0 25%, #808080 50%, #c0c0c0 75%, #ffffff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #909090;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .marketplace-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(3em, 8vw, 6em);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, #ffffff 0%, #c0c0c0 50%, #ffffff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .marketplace-subtitle {
+            font-size: 1.3em;
+            color: #808080;
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .coming-soon {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(255, 149, 0, 0.05));
+            border: 2px solid rgba(255, 149, 0, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .coming-soon h3 {
+            color: #ff9500;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .coming-soon p {
+            color: #c0c0c0;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        /* Marketplace Grid Preview */
+        .marketplace-grid {
+            max-width: 1400px;
+            margin: 60px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* Giant 85/15 Background */
+        .revenue-split-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(15em, 25vw, 30em);
+            font-weight: 900;
+            color: rgba(255, 149, 0, 0.25);
+            text-shadow: 
+                0 0 50px rgba(255, 149, 0, 0.3),
+                0 0 100px rgba(255, 149, 0, 0.2),
+                0 0 150px rgba(255, 149, 0, 0.1);
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+            letter-spacing: 0.1em;
+            animation: glow-pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { 
+                opacity: 0.8; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.02);
+            }
+        }
+
+        .grid-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5em;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 40px;
+            color: #c0c0c0;
+        }
+
+        .segments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .segment-card {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(50, 50, 50, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0.6;
+        }
+
+        .segment-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(30, 30, 30, 0.9));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .segment-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .segment-video:hover {
+            transform: scale(1.05);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px 15px 0 0;
+            pointer-events: none;
+        }
+
+        .segment-card:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .play-button {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 149, 0, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 15px;
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid rgba(255, 149, 0, 0.3);
+        }
+
+        .modal-video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 149, 0, 0.9);
+            color: #000;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 149, 0, 1);
+            transform: scale(1.1);
+        }
+
+        .segment-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 149, 0, 0.05) 10px,
+                rgba(255, 149, 0, 0.05) 20px
+            );
+        }
+
+        .image-placeholder {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            z-index: 1;
+            position: relative;
+        }
+
+        .segment-content {
+            padding: 25px;
+        }
+
+        .segment-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 149, 0, 0.5);
+            opacity: 1;
+        }
+
+        .segment-card.preview {
+            border-color: rgba(255, 149, 0, 0.3);
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.05), rgba(50, 50, 50, 0.9));
+        }
+
+        .segment-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .segment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #808080;
+        }
+
+        .segment-duration {
+            background: rgba(255, 149, 0, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #ff9500;
+            font-weight: 600;
+        }
+
+        .segment-description {
+            color: #c0c0c0;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .audio-player {
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(90deg, #ff9500, #ffa500);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .placeholder-text {
+            text-align: center;
+            color: #606060;
+            font-style: italic;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .sponsor-section {
+            background: linear-gradient(135deg, rgba(100, 100, 100, 0.1), rgba(50, 50, 50, 0.1));
+            padding: 60px 20px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .sponsor-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .sponsor-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, rgba(100, 100, 255, 0.3), rgba(100, 100, 255, 0.4));
+            border: 2px solid #6495ed;
+            border-radius: 30px;
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            margin-top: 20px;
+        }
+
+        .sponsor-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(100, 149, 237, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .segments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Layers -->
+    <div class="bg-layer-1"></div>
+    <div class="bg-layer-2"></div>
+    <div class="bg-layer-3"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">
+                SYNDICATE
+                <span style="display: block; font-size: 0.4em; letter-spacing: 2px; color: #606060; margin-top: -5px;">BY IRONBARK PRODUCTIONS</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#ai-team" class="nav-link">AI Team</a>
+                <a href="marketplace.html" class="nav-link" style="color: #ff9500;">Marketplace</a>
+                <a href="software.html" class="nav-link">Software</a>
+                <a href="terms.html" class="nav-link">Terms</a>
+                <a href="index.html" class="nav-link">Pre-Order</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section" style="padding: 20px 20px 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 30px;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h1 class="marketplace-title" style="margin-bottom: 10px; text-align: left;">SYNDICATE LISTENS</h1>
+                    <p class="marketplace-subtitle" style="text-align: left; font-size: 1.5em;">Take The Discussion Anywhere</p>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.15), rgba(255, 149, 0, 0.08)); border: 2px solid rgba(255, 149, 0, 0.4); border-radius: 20px; padding: 20px 30px; margin-left: 20px; min-width: 200px;">
+                    <h3 style="color: #ff9500; font-family: 'Rajdhani', sans-serif; font-size: 1.3em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">🚀 Coming Soon</h3>
+                    <p style="color: #c0c0c0; font-size: 0.9em; line-height: 1.4; margin: 0 0 8px 0;">
+                        Marketplace launches soon. Listen to the example below.
+                    </p>
+                    <p style="color: #ff9500; font-size: 0.85em; font-weight: 600; line-height: 1.3; margin: 0;">
+                        Creators decide to sell between one and five dollars per listen.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marketplace Grid Preview -->
+        <section class="marketplace-grid">
+            <div class="revenue-split-bg">85/15</div>
+            
+            <!-- Sponsor Row -->
+            <div style="margin-bottom: 40px;">
+                <h3 style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.5em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; text-align: center;">🎯 Sponsor Placements</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 60px;">
+                    <div style="background: linear-gradient(135deg, rgba(100, 149, 237, 0.1), rgba(100, 149, 237, 0.05)); border: 2px dashed rgba(100, 149, 237, 0.4); border-radius: 15px; padding: 30px 20px; text-align: center; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.4em; font-weight: 700; margin-bottom: 10px;">YOUR PODCAST AD</div>
+                        <p style="color: #9bb5ed; font-size: 0.95em; line-height: 1.3;">Premium sponsor placement</p>
+                        <div style="margin-top: 15px; padding: 6px 15px; background: rgba(100, 149, 237, 0.2); border-radius: 15px; display: inline-block; align-self: center;">
+                            <span style="color: #6495ed; font-weight: 600; font-size: 0.85em;">CONTACT FOR RATES</span>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(100, 149, 237, 0.1), rgba(100, 149, 237, 0.05)); border: 2px dashed rgba(100, 149, 237, 0.4); border-radius: 15px; padding: 30px 20px; text-align: center; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.4em; font-weight: 700; margin-bottom: 10px;">YOUR PODCAST AD</div>
+                        <p style="color: #9bb5ed; font-size: 0.95em; line-height: 1.3;">Premium sponsor placement</p>
+                        <div style="margin-top: 15px; padding: 6px 15px; background: rgba(100, 149, 237, 0.2); border-radius: 15px; display: inline-block; align-self: center;">
+                            <span style="color: #6495ed; font-weight: 600; font-size: 0.85em;">CONTACT FOR RATES</span>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(100, 149, 237, 0.1), rgba(100, 149, 237, 0.05)); border: 2px dashed rgba(100, 149, 237, 0.4); border-radius: 15px; padding: 30px 20px; text-align: center; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.4em; font-weight: 700; margin-bottom: 10px;">YOUR PODCAST AD</div>
+                        <p style="color: #9bb5ed; font-size: 0.95em; line-height: 1.3;">Premium sponsor placement</p>
+                        <div style="margin-top: 15px; padding: 6px 15px; background: rgba(100, 149, 237, 0.2); border-radius: 15px; display: inline-block; align-self: center;">
+                            <span style="color: #6495ed; font-weight: 600; font-size: 0.85em;">CONTACT FOR RATES</span>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(100, 149, 237, 0.1), rgba(100, 149, 237, 0.05)); border: 2px dashed rgba(100, 149, 237, 0.4); border-radius: 15px; padding: 30px 20px; text-align: center; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.4em; font-weight: 700; margin-bottom: 10px;">YOUR PODCAST AD</div>
+                        <p style="color: #9bb5ed; font-size: 0.95em; line-height: 1.3;">Premium sponsor placement</p>
+                        <div style="margin-top: 15px; padding: 6px 15px; background: rgba(100, 149, 237, 0.2); border-radius: 15px; display: inline-block; align-self: center;">
+                            <span style="color: #6495ed; font-weight: 600; font-size: 0.85em;">CONTACT FOR RATES</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="grid-title">Preview: How It Will Work</h2>
+            
+            <!-- Basic Filters -->
+            <div class="filters-section" style="display: flex; gap: 30px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap;">
+                <div class="filter-group">
+                    <label style="color: #ff9500; font-family: 'Rajdhani', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">Sort:</label>
+                    <select style="background: rgba(30,30,30,0.9); border: 1px solid rgba(255,149,0,0.3); border-radius: 5px; color: #fff; padding: 5px 15px; font-size: 0.9em;">
+                        <option>Most Views</option>
+                        <option>Newest</option>
+                        <option>Highest Rated</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label style="color: #ff9500; font-family: 'Rajdhani', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">Language:</label>
+                    <select style="background: rgba(30,30,30,0.9); border: 1px solid rgba(255,149,0,0.3); border-radius: 5px; color: #fff; padding: 5px 15px; font-size: 0.9em;">
+                        <option>All</option>
+                        <option>English</option>
+                        <option>Español</option>
+                        <option>Bilingual</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label style="color: #ff9500; font-family: 'Rajdhani', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">Topic:</label>
+                    <select style="background: rgba(30,30,30,0.9); border: 1px solid rgba(255,149,0,0.3); border-radius: 5px; color: #fff; padding: 5px 15px; font-size: 0.9em;">
+                        <option>All Topics</option>
+                        <option>Politics</option>
+                        <option>Crime & Justice</option>
+                        <option>Tech & AI</option>
+                        <option>Economics</option>
+                        <option>Social Issues</option>
+                        <option>Controversial</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="segments-grid">
+                <!-- Sample Segment 1 -->
+                <div class="segment-card preview" style="border-color: rgba(255, 149, 0, 0.6); opacity: 1;">
+                    <div class="preview-badge" style="background: linear-gradient(90deg, #ff9500, #ffa500); color: #000; animation: pulse 2s infinite;">WATCH NOW</div>
+                    <div class="segment-image">
+                        <video class="segment-video" muted loop autoplay>
+                            <source src="prison-economy.mp4" type="video/mp4">
+                            <div class="image-placeholder">Prison Economy<br>Discussion</div>
+                        </video>
+                        <div class="video-overlay">
+                            <div class="play-button">▶</div>
+                        </div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Prison Economy</h3>
+                        <div class="segment-meta">
+                            <span>AI Panel Discussion</span>
+                            <span class="segment-duration">18:32</span>
+                        </div>
+                        <p class="segment-description">
+                            How private prison companies profit from mass incarceration. AIs examine the corrupting influence of profit motives in the justice system and the human cost of treating prisoners as revenue streams.
+                        </p>
+                        <audio class="audio-player" controls>
+                            <source src="prison-economy-audio.m4a" type="audio/mp4">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div class="placeholder-text">Real IronBark Productions example - Full Audio Available</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 2 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">AI Topic<br>Crypto Discussion</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Victimless Crimes</h3>
+                        <div class="segment-meta">
+                            <span>4 AI Models Discuss</span>
+                            <span class="segment-duration">18:42</span>
+                        </div>
+                        <p class="segment-description">
+                            Should drug use, gambling, and prostitution be illegal? AIs debate personal freedom vs law.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 3 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">Podcast Segment<br>Climate Tech</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Murder or Overdose</h3>
+                        <div class="segment-meta">
+                            <span>Fentanyl Crisis Analysis</span>
+                            <span class="segment-duration">25:33</span>
+                        </div>
+                        <p class="segment-description">
+                            Brutal reality of the fentanyl epidemic - dealers, victims, and systemic failures.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 4 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">AI Discussion<br>Space Exploration</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">SpaceX Explosion</h3>
+                        <div class="segment-meta">
+                            <span>Failure Analysis</span>
+                            <span class="segment-duration">20:17</span>
+                        </div>
+                        <p class="segment-description">
+                            What really went wrong? Engineering failures, cover-ups, and billion-dollar mistakes.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 5 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">Podcast Topic<br>Startup Funding</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Startup Funding Trends</h3>
+                        <div class="segment-meta">
+                            <span>VC Market Analysis</span>
+                            <span class="segment-duration">19:28</span>
+                        </div>
+                        <p class="segment-description">
+                            AI models analyze current venture capital trends and startup ecosystem changes.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 6 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">AI Topic Discussion<br>Future of Work</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Future of Work</h3>
+                        <div class="segment-meta">
+                            <span>Remote vs AI Impact</span>
+                            <span class="segment-duration">23:45</span>
+                        </div>
+                        <p class="segment-description">
+                            How AI and remote work are reshaping careers, jobs, and the economy.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 7 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">Podcast Segment<br>Social Media</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Social Media Evolution</h3>
+                        <div class="segment-meta">
+                            <span>Platform Wars Discussion</span>
+                            <span class="segment-duration">21:12</span>
+                        </div>
+                        <p class="segment-description">
+                            Analysis of TikTok, X, Meta, and emerging social platforms' strategies.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+
+                <!-- Sample Segment 8 -->
+                <div class="segment-card preview">
+                    <div class="preview-badge">Preview</div>
+                    <div class="segment-image">
+                        <div class="image-placeholder">AI Discussion<br>Healthcare AI</div>
+                    </div>
+                    <div class="segment-content">
+                        <h3 class="segment-title">Healthcare Revolution</h3>
+                        <div class="segment-meta">
+                            <span>AI in Medicine</span>
+                            <span class="segment-duration">24:09</span>
+                        </div>
+                        <p class="segment-description">
+                            How AI is transforming diagnosis, treatment, and healthcare delivery systems.
+                        </p>
+                        <audio class="audio-player" controls disabled>
+                            <source src="#" type="audio/mpeg">
+                        </audio>
+                        <div class="placeholder-text">Audio player will be functional at launch</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sponsor Section -->
+        <section class="sponsor-section">
+            <h2 class="sponsor-title">Interested in Sponsoring?</h2>
+            <p style="color: #c0c0c0; font-size: 1.1em; margin-bottom: 20px;">
+                Partner with SYNDICATE to reach podcast creators and AI enthusiasts
+            </p>
+            <a href="mailto:ads@ironbarkproductions.com" class="sponsor-btn">Contact for Partnerships</a>
+            
+            <!-- Revenue Split Fine Print -->
+            <div style="margin-top: 60px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <p style="color: #808080; font-size: 0.9em; line-height: 1.6; text-align: center;">
+                    <strong style="color: #ff9500;">Creator Revenue Model:</strong> 
+                    Creators receive 85% of all revenue including segment sales ($1-$5) and advertising revenue. 
+                    SYNDICATE retains 15% for platform operations. All payments processed monthly.<br><br>
+                    <strong style="color: #ff9500;">Quality Control:</strong> 
+                    $0.50/month subscription fee to guard against low-quality content and spam submissions.<br><br>
+                    <a href="terms.html" style="color: #ff9500; text-decoration: none; font-weight: 600;">→ View Full Terms and Conditions</a>
+                </p>
+            </div>
+
+            <!-- Marketplace Creator Instructions -->
+            <div style="margin-top: 40px; padding: 25px; background: rgba(100, 149, 237, 0.08); border: 2px solid rgba(100, 149, 237, 0.4); border-radius: 15px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.4em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; text-align: center;">📋 How to Join as a Creator</h3>
+                <p style="color: #c0c0c0; font-size: 1.1em; line-height: 1.6; text-align: center; margin-bottom: 20px;">
+                    These are the instructions once you order - if you want to be on the marketplace:
+                </p>
+                <div style="background: rgba(100, 149, 237, 0.1); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                    <p style="color: #9bb5ed; font-size: 1em; text-align: center; margin-bottom: 15px;">
+                        Email <strong style="color: #6495ed;">support@ironbarkproductions.com</strong> with:
+                    </p>
+                    <ul style="color: #9bb5ed; font-size: 0.95em; text-align: left; max-width: 400px; margin: 0 auto;">
+                        <li>Your email address</li>
+                        <li>Your Stripe payment ID (from your receipt)</li>
+                        <li>Your topic for AI discussion</li>
+                    </ul>
+                </div>
+                <p style="color: #808080; font-size: 0.9em; text-align: center; font-style: italic;">
+                    We'll verify your purchase and add you to the creator waitlist. First come, first serve!
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <video class="modal-video" id="modalVideo" controls>
+                <source id="modalVideoSource" src="" type="video/quicktime">
+            </video>
+        </div>
+    </div>
+
+    <script>
+        // Video Modal Functionality
+        const videoModal = document.getElementById('videoModal');
+        const modalVideo = document.getElementById('modalVideo');
+        const modalVideoSource = document.getElementById('modalVideoSource');
+        const modalClose = document.getElementById('modalClose');
+
+        // Open modal when video is clicked
+        document.querySelectorAll('.segment-video').forEach(video => {
+            video.addEventListener('click', (e) => {
+                e.preventDefault();
+                const videoSrc = video.querySelector('source').src;
+                modalVideoSource.src = videoSrc;
+                modalVideo.load();
+                videoModal.classList.add('active');
+                modalVideo.play();
+            });
+        });
+
+        // Close modal
+        modalClose.addEventListener('click', () => {
+            videoModal.classList.remove('active');
+            modalVideo.pause();
+            modalVideo.currentTime = 0;
+        });
+
+        // Close modal when clicking outside
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                videoModal.classList.remove('active');
+                modalVideo.pause();
+                modalVideo.currentTime = 0;
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+                videoModal.classList.remove('active');
+                modalVideo.pause();
+                modalVideo.currentTime = 0;
+            }
+        });
+
+        // Add some hover effects
+        document.querySelectorAll('.segment-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Placeholder for future audio functionality
+        document.querySelectorAll('.audio-player').forEach(player => {
+            player.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Audio playbook will be available when the marketplace launches!');
+            });
+        });
+    </script>
+</body>
+</html>

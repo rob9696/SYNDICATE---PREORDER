@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNDICATE - Direct Your AI Empire</title>
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Comfortaa:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transition: all 0.1s ease;
+            z-index: 99999;
+            mix-blend-mode: difference;
+            display: block;
+        }
+
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            mix-blend-mode: difference;
+            display: block;
+        }
+
+        .cursor.expand {
+            transform: scale(2);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: #000000;
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Layers */
+        .bg-layer-1 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at top, #1a1a1a 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, #0f0f0f 0%, transparent 50%),
+                linear-gradient(180deg, #000000 0%, #1c1c1c 100%);
+            z-index: -3;
+        }
+
+        .bg-layer-2 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(150, 150, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(200, 200, 200, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(180, 180, 180, 0.08) 0%, transparent 50%);
+            animation: ocean-flow 20s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        .bg-layer-3 {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.2), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(200, 200, 200, 0.15), transparent),
+                radial-gradient(1px 1px at 90% 10%, rgba(150, 150, 150, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: float-particles 15s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes ocean-flow {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+            33% { transform: translateY(-20px) translateX(10px) scale(1.02); }
+            66% { transform: translateY(20px) translateX(-10px) scale(0.98); }
+        }
+
+        @keyframes float-particles {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100vh); }
+        }
+
+        /* Grid Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+            animation: grid-fade 10s ease-in-out infinite;
+        }
+
+        @keyframes grid-fade {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-bar.scrolled {
+            background: rgba(0,0,0,0.95);
+            padding: 15px 40px;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(90deg,
+                #ffffff 0%,
+                #c0c0c0 25%,
+                #808080 50%,
+                #c0c0c0 75%,
+                #ffffff 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: silver-shimmer 3s linear infinite;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+        }
+
+        @keyframes silver-shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #909090;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #c0c0c0, #ffffff);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            padding-top: 120px;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(4em, 10vw, 8em);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 0;
+            position: relative;
+            line-height: 0.9;
+        }
+
+        .hero-title-main {
+            background: linear-gradient(90deg,
+                #ffffff 0%,
+                #e0e0e0 20%,
+                #c0c0c0 40%,
+                #808080 50%,
+                #c0c0c0 60%,
+                #e0e0e0 80%,
+                #ffffff 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: chrome-wave 4s linear infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+        }
+
+        @keyframes chrome-wave {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2em, 3vw, 2em);
+            color: #808080;
+            margin: 20px 0;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .typewriter {
+            display: inline-block;
+            overflow: hidden;
+            border-right: 3px solid #808080;
+            white-space: nowrap;
+            animation: typing 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #808080 }
+        }
+
+        .hero-description {
+            font-size: 1.1em;
+            color: #606060;
+            margin: 30px auto;
+            max-width: 600px;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fade-in-up 1s ease 2s forwards;
+        }
+
+        @keyframes fade-in-up {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .hero-cta {
+            margin-top: 50px;
+            opacity: 0;
+            animation: fade-in-up 1s ease 2.5s forwards;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 20px 60px;
+            background: linear-gradient(135deg, 
+                rgba(100, 100, 100, 0.3), 
+                rgba(150, 150, 150, 0.3)
+            );
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transition: width 0.6s ease, height 0.6s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 10px 30px rgba(255, 255, 255, 0.2),
+                0 0 60px rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Floating Text Phrases */
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.15);
+            white-space: nowrap;
+        }
+
+        .shape-1 {
+            top: 15%;
+            left: 10%;
+            animation: fade-text 12s infinite;
+        }
+
+        .shape-1::before {
+            content: 'Whole > Sum of Parts';
+            position: absolute;
+            animation: text-cycle-1 12s infinite;
+        }
+
+        @keyframes text-cycle-1 {
+            0%, 100% { content: 'Whole > Sum of Parts'; opacity: 0; }
+            10%, 25% { content: 'Whole > Sum of Parts'; opacity: 1; }
+            35%, 45% { content: 'Audio Coming Soon'; opacity: 1; }
+            55%, 65% { content: 'Real AI Conversations'; opacity: 1; }
+            75%, 85% { content: 'Flagship Models Only'; opacity: 1; }
+            95% { opacity: 0; }
+        }
+
+        .shape-2 {
+            top: 60%;
+            right: 25%;
+            animation: fade-text 15s infinite;
+            animation-delay: 4s;
+        }
+
+        .shape-2::before {
+            content: 'Best Minds = Best Content';
+            position: absolute;
+            animation: text-cycle-2 15s infinite;
+            animation-delay: 4s;
+        }
+
+        @keyframes text-cycle-2 {
+            0%, 100% { content: 'Best Minds = Best Content'; opacity: 0; }
+            10%, 25% { content: 'Best Minds = Best Content'; opacity: 1; }
+            35%, 45% { content: 'No Scripts. No Fakery.'; opacity: 1; }
+            55%, 65% { content: '20 Minutes of Gold'; opacity: 1; }
+            75%, 85% { content: 'Level Up Your Podcast'; opacity: 1; }
+            95% { opacity: 0; }
+        }
+
+        .shape-3 {
+            bottom: 25%;
+            left: 15%;
+            animation: fade-text 10s infinite;
+            animation-delay: 7s;
+        }
+
+        .shape-3::before {
+            content: 'AI Content Entertainment';
+            position: absolute;
+            animation: text-cycle-3 10s infinite;
+            animation-delay: 7s;
+        }
+
+        @keyframes text-cycle-3 {
+            0%, 100% { content: 'AI Content Entertainment'; opacity: 0; }
+            10%, 30% { content: 'AI Content Entertainment'; opacity: 1; }
+            40%, 60% { content: 'Direct The Discussion'; opacity: 1; }
+            70%, 90% { content: '$45 Per Segment'; opacity: 1; }
+            95% { opacity: 0; }
+        }
+
+        @keyframes fade-text {
+            0%, 100% {
+                transform: translateY(0);
+                filter: blur(2px);
+            }
+            50% {
+                transform: translateY(-10px);
+                filter: blur(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3em;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 60px;
+            background: linear-gradient(90deg, #808080, #ffffff, #808080);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: silver-shimmer 3s linear infinite;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, 
+                rgba(20, 20, 20, 0.9), 
+                rgba(40, 40, 40, 0.9)
+            );
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent
+            );
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 15px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 
+                0 20px 40px rgba(255, 255, 255, 0.1),
+                0 0 80px rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+            animation: shine 0.5s ease;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: linear-gradient(135deg, #c0c0c0, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+        }
+
+        .feature-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .feature-description {
+            color: #808080;
+            line-height: 1.6;
+        }
+
+        /* AI Avatars Section */
+        .ai-section {
+            padding: 100px 20px;
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(180deg, transparent, rgba(10, 10, 10, 0.5), transparent);
+        }
+
+        .ai-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .ai-carousel {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 40px 0;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+
+        .ai-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ai-card {
+            min-width: 300px;
+            background: linear-gradient(135deg, 
+                rgba(30, 30, 30, 0.9), 
+                rgba(50, 50, 50, 0.9)
+            );
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            scroll-snap-align: center;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .ai-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.03) 2px,
+                    rgba(255, 255, 255, 0.03) 4px
+                );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-card:hover::before {
+            opacity: 1;
+            animation: glitch 0.3s ease;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-2px); }
+            40% { transform: translateX(2px); }
+            60% { transform: translateX(-1px); }
+            80% { transform: translateX(1px); }
+        }
+
+        .ai-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #606060, #c0c0c0);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-avatar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(255, 255, 255, 0.1));
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        .ai-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .ai-description {
+            color: #808080;
+            line-height: 1.4;
+            font-size: 0.9em;
+        }
+
+        /* Command Terminal Preview */
+        .terminal-section {
+            padding: 100px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .terminal-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .terminal {
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.8),
+                0 0 100px rgba(255, 255, 255, 0.05);
+        }
+
+        .terminal-header {
+            background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 30px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #00ff00;
+            min-height: 300px;
+        }
+
+        .terminal-line {
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: type-line 0.5s ease forwards;
+        }
+
+        .terminal-line:nth-child(1) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(2) { animation-delay: 1s; }
+        .terminal-line:nth-child(3) { animation-delay: 1.5s; }
+        .terminal-line:nth-child(4) { animation-delay: 2s; }
+        .terminal-line:nth-child(5) { animation-delay: 2.5s; }
+
+        @keyframes type-line {
+            to { opacity: 1; }
+        }
+
+        .terminal-prompt {
+            color: #808080;
+        }
+
+        .terminal-command {
+            color: #ffffff;
+        }
+
+        .terminal-output {
+            color: #00ff00;
+            margin-left: 20px;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #00ff00;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 150px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            background: radial-gradient(ellipse at center, rgba(100, 100, 100, 0.1), transparent 70%);
+        }
+
+        .cta-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 4em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg,
+                #ffffff 0%,
+                #c0c0c0 50%,
+                #ffffff 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: chrome-wave 3s linear infinite;
+        }
+
+        .cta-subtitle {
+            color: #808080;
+            font-size: 1.3em;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-text {
+            color: #606060;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator::before {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .scroll-indicator::after {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 3px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scroll-wheel 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes scroll-wheel {
+            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(20px); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: clamp(3em, 12vw, 5em);
+                letter-spacing: 4px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .ai-carousel {
+                gap: 20px;
+            }
+
+            .ai-card {
+                min-width: 250px;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2em;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .loader-text::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffffff, transparent);
+            animation: loader-scan 2s linear infinite;
+        }
+
+        @keyframes loader-scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-text">INITIALIZING</div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+
+    <!-- Background Layers -->
+    <div class="bg-layer-1"></div>
+    <div class="bg-layer-2"></div>
+    <div class="bg-layer-3"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-bar" id="navbar">
+        <div class="nav-content">
+            <div class="nav-logo">
+                SYNDICATE
+                <span style="display: block; font-size: 0.4em; letter-spacing: 2px; color: #606060; margin-top: -5px;">BY IRONBARK PRODUCTIONS</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#ai-team" class="nav-link">AI Team</a>
+                <a href="marketplace.html" class="nav-link">Marketplace</a>
+                <a href="software.html" class="nav-link">Software</a>
+                <a href="terms.html" class="nav-link">Terms</a>
+                <a href="#" class="nav-link" onclick="startCheckout(event, 'transcript')">Get Started - $45</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="hero-title-main">SYNDICATE</span>
+            </h1>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin: 20px 0; flex-wrap: wrap;">
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.8em; font-weight: 700; color: #00ff00; text-shadow: 0 0 20px rgba(0,255,0,0.5);">GPT-5</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.5em; color: #606060;">•</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.8em; font-weight: 700; color: #ff9500; text-shadow: 0 0 20px rgba(255,149,0,0.5);">CLAUDE OPUS</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.5em; color: #606060;">•</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.8em; font-weight: 700; color: #4285f4; text-shadow: 0 0 20px rgba(66,133,244,0.5);">GEMINI 2.5 PRO</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.5em; color: #606060;">•</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-size: 1.8em; font-weight: 700; color: #ffffff; text-shadow: 0 0 20px rgba(255,255,255,0.5);">GROK 4</span>
+            </div>
+            <div class="hero-subtitle">
+                <span class="typewriter">Level Up Your Podcast</span>
+            </div>
+            <p class="hero-description">
+                Toss in a roughly 20-minute conversation between the best players in the AI scene.
+                Real discussions between GPT-5, Claude Opus 4.1, Gemini 2.5 Pro, and Grok 4. 
+                Not scripted. Not fake. Genuine AI-to-AI conversations.
+                Pick your topic, level up your podcast, or browse our <strong style="color: #ff9500;">marketplace</strong> for premium segments.
+            </p>
+            <!-- Preview Section -->
+            <div style="margin: 40px auto; padding: 30px; background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(255, 149, 0, 0.05)); border: 2px solid rgba(255, 149, 0, 0.3); border-radius: 15px; max-width: 700px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500; font-family: 'Rajdhani', sans-serif; font-size: 1.5em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">👂 Hear What You're Getting</h3>
+                    <p style="color: #c0c0c0; font-size: 1.1em; line-height: 1.6;">
+                        Listen to a real AI discussion on prison economics - this is exactly the kind of deep conversation you'll get on any topic.
+                    </p>
+                </div>
+                <audio controls style="width: 100%; margin-bottom: 20px;">
+                    <source src="prison-economy-audio.m4a" type="audio/mp4">
+                    Your browser does not support the audio element.
+                </audio>
+                <div style="text-align: center;">
+                    <a href="marketplace.html" style="color: #ff9500; text-decoration: none; font-weight: 600;">→ Browse More Examples in Our Marketplace Preview</a>
+                </div>
+            </div>
+
+            <div class="hero-cta">
+                <!-- Pricing Options -->
+                <div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px;">
+                    <div style="background: linear-gradient(135deg, rgba(50, 50, 50, 0.3), rgba(80, 80, 80, 0.3)); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 30px; min-width: 250px;">
+                        <h3 style="color: #ffffff; margin-bottom: 15px; font-family: 'Rajdhani', sans-serif; font-size: 1.5em;">TRANSCRIPT ONLY</h3>
+                        <div style="color: #c0c0c0; font-size: 2.5em; font-weight: bold; margin-bottom: 15px;">$45</div>
+                        <ul style="list-style: none; padding: 0; color: #c0c0c0; text-align: left; margin-bottom: 20px;">
+                            <li style="margin: 10px 0;">✓ Full conversation transcript</li>
+                            <li style="margin: 10px 0;">✓ ~20 minutes of AI discussion</li>
+                            <li style="margin: 10px 0;">✓ Ready for your podcast</li>
+                            <li style="margin: 10px 0;">✓ 48-hour delivery</li>
+                        </ul>
+                        <a href="#" class="btn-primary" onclick="startCheckout(event, 'transcript')" style="display: block; text-align: center;">PRE-ORDER TRANSCRIPT</a>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(255, 149, 0, 0.05)); border: 2px solid rgba(255, 149, 0, 0.4); border-radius: 15px; padding: 30px; min-width: 250px; position: relative;">
+                        <div style="position: absolute; top: -12px; right: 20px; background: linear-gradient(90deg, #ff9500, #ffa500); padding: 5px 15px; border-radius: 20px; font-size: 0.8em; font-weight: bold; color: #000;">COMPLETE PACKAGE</div>
+                        <h3 style="color: #ffffff; margin-bottom: 15px; font-family: 'Rajdhani', sans-serif; font-size: 1.5em;">AUDIO + SCRIPTS</h3>
+                        <div style="color: #ff9500; font-size: 2.5em; font-weight: bold; margin-bottom: 15px;">$79.99</div>
+                        <ul style="list-style: none; padding: 0; color: #c0c0c0; text-align: left; margin-bottom: 20px;">
+                            <li style="margin: 10px 0; color: #00ff00;">✓ ~20 min audio (MP3)</li>
+                            <li style="margin: 10px 0; color: #00ff00;">✓ Edited, clean script</li>
+                            <li style="margin: 10px 0;">✓ Raw transcript</li>
+                            <li style="margin: 10px 0;">✓ Podcast-ready format</li>
+                            <li style="margin: 10px 0;">✓ Drop into your show</li>
+                            <li style="margin: 10px 0;">✓ 48-hour delivery</li>
+                        </ul>
+                        <a href="#" class="btn-primary" onclick="startCheckout(event, 'complete')" style="display: block; text-align: center; background: linear-gradient(135deg, rgba(255, 149, 0, 0.3), rgba(255, 149, 0, 0.4)); border-color: #ff9500;">PRE-ORDER COMPLETE PACKAGE</a>
+                    </div>
+                </div>
+                <!-- Pre-order Notice -->
+                <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, rgba(255,149,0,0.1), rgba(255,149,0,0.05)); border: 2px solid rgba(255,149,0,0.3); border-radius: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                        <span style="background: linear-gradient(90deg, #ff9500, #ffa500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-family: 'Rajdhani', sans-serif; font-size: 1.3em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">🚀 Pre-Launch Special</span>
+                    </div>
+                    <p style="color: #e0e0e0; font-size: 1.1em; margin-bottom: 15px; line-height: 1.6;">
+                        <strong style="color: #ff9500;">📧 Delivered within 48 hours via email</strong><br>
+                        As an early supporter, your segment will be personally crafted and sent to you. 
+                        When we launch our instant system, you'll be among the first to get access!
+                    </p>
+                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+                        <span style="color: #00ff00; font-family: 'Rajdhani', sans-serif; font-weight: 600;">✓ Priority Access at Launch</span>
+                        <span style="color: #00ff00; font-family: 'Rajdhani', sans-serif; font-weight: 600;">✓ Save 25% (Future: $60)</span>
+                        <span style="color: #00ff00; font-family: 'Rajdhani', sans-serif; font-weight: 600;">✓ Founding Member Status</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <h2 class="section-title">Direct & Control</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Real AI Conversations</h3>
+                    <p class="feature-description">
+                        The best AIs actually talking to each other in real-time.
+                        Not copy-pasted prompts. Live interaction that sounds natural because it is.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Flagship Models Only</h3>
+                    <p class="feature-description">
+                        No budget models. No open-source experiments.
+                        Only the current best: GPT-5, Claude Opus 4.1, Gemini 2.5 Pro, Grok 4.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3 class="feature-title">Research Phase</h3>
+                    <p class="feature-description">
+                        No budget models here either. Research powered by Gemini, Grok, and Perplexity.
+                        Deep dive research before every discussion.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💎</div>
+                    <h3 class="feature-title">~20 Minutes for $45</h3>
+                    <p class="feature-description">
+                        Premium discussion insert ready to drop straight into your podcast.
+                        Cheaper than any guest expert, more engaging than solo commentary.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">Live Streaming</h3>
+                    <p class="feature-description">
+                        Technology powering real-time updates. Watch as AI models think, 
+                        research, and debate in live production sessions.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">Real Experts On Your Topic</h3>
+                    <p class="feature-description">
+                        Add genuine expertise to your podcast. These AIs bring depth and insights
+                        that rival any human expert panel - on any topic you choose.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Team Section -->
+    <section class="ai-section" id="ai-team">
+        <div class="ai-container">
+            <h2 class="section-title">Your AI Squadron</h2>
+            
+            <!-- Headliners Row -->
+            <h3 style="text-align: center; color: #c0c0c0; font-family: 'Rajdhani', sans-serif; font-size: 1.8em; text-transform: uppercase; letter-spacing: 3px; margin: 40px 0 30px;">The Headliners</h3>
+            <div class="ai-grid" style="display: flex; justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto 60px; flex-wrap: wrap;">
+                <div class="ai-card" style="min-width: 200px; max-width: 220px; flex: 0 1 220px;">
+                    <div class="ai-avatar"></div>
+                    <h3 class="ai-name">Claude Opus 4.1</h3>
+                    <p class="ai-description">
+                        Anthropic's most advanced model with careful reasoning and deep analysis.
+                    </p>
+                </div>
+                <div class="ai-card" style="min-width: 200px; max-width: 220px; flex: 0 1 220px;">
+                    <div class="ai-avatar"></div>
+                    <h3 class="ai-name">GPT-5</h3>
+                    <p class="ai-description">
+                        OpenAI's latest flagship with broad knowledge and creative capabilities.
+                    </p>
+                </div>
+                <div class="ai-card" style="min-width: 200px; max-width: 220px; flex: 0 1 220px;">
+                    <div class="ai-avatar"></div>
+                    <h3 class="ai-name">Gemini 2.5 Pro</h3>
+                    <p class="ai-description">
+                        Google's most powerful model with vast information resources.
+                    </p>
+                </div>
+                <div class="ai-card" style="min-width: 200px; max-width: 220px; flex: 0 1 220px;">
+                    <div class="ai-avatar"></div>
+                    <h3 class="ai-name">Grok 4</h3>
+                    <p class="ai-description">
+                        xAI's latest with real-time knowledge and unique perspectives.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Terminal Preview -->
+    <section class="terminal-section" id="terminal">
+        <div class="terminal-container">
+            <h2 class="section-title">Direct AIs Between Rounds</h2>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command">@grok check what's happening on X about this right now</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-output">✓ Grok scanning X for real-time sentiment...</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command">@all this topic is crucial - bring your A-game</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-output">➤ Message sent to all panelists</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command">@gemini don't hold back on the controversial takes</span>
+                        <span class="terminal-cursor"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2 class="cta-title">Be a Founding Member</h2>
+        <p class="cta-subtitle">Get early access to AI segments from the best in the game</p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="#" class="btn-primary" onclick="startCheckout(event, 'transcript')">PRE-ORDER TRANSCRIPT - $45</a>
+            <a href="#" class="btn-primary" onclick="startCheckout(event, 'complete')" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.3), rgba(255, 149, 0, 0.4)); border-color: #ff9500;">PRE-ORDER COMPLETE PACKAGE - $79.99</a>
+        </div>
+
+        <!-- Marketplace Creator Signup -->
+        <div style="margin-top: 30px; padding: 20px; background: rgba(100, 149, 237, 0.05); border: 2px solid rgba(100, 149, 237, 0.3); border-radius: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <h4 style="color: #6495ed; font-family: 'Rajdhani', sans-serif; font-size: 1.2em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; text-align: center;">🎯 Want to Monetize Your Segment?</h4>
+            <p style="color: #c0c0c0; font-size: 1em; line-height: 1.5; text-align: center;">
+                After your order, email <strong style="color: #6495ed;">support@ironbarkproductions.com</strong> with:
+            </p>
+            <ul style="color: #9bb5ed; font-size: 0.95em; margin: 15px 0; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+                <li>Your email address</li>
+                <li>Your Stripe payment ID (from receipt)</li>
+                <li>Your topic for AI discussion</li>
+            </ul>
+            <p style="color: #808080; font-size: 0.9em; text-align: center; font-style: italic;">
+                First come, first serve for marketplace spots!
+            </p>
+        </div>
+        <!-- Pre-order Notice -->
+        <div style="margin-top: 30px; padding: 20px; background: rgba(255,149,0,0.05); border: 1px solid rgba(255,149,0,0.2); border-radius: 10px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <p style="color: #ff9500; font-weight: 600; margin-bottom: 10px;">📧 48-Hour Delivery During Pre-Launch</p>
+            <p style="color: #999; font-size: 0.95em; line-height: 1.5;">
+                Your segment will be personally crafted and delivered via email within 48 hours. 
+                Once we launch, you'll have instant access to our automated system.
+            </p>
+        </div>
+    </section>
+
+    <!-- Legal Disclaimers -->
+    <div class="legal-section" style="background: rgba(255,100,0,0.05); border-top: 1px solid rgba(255,100,0,0.2); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h3 style="color: #ff9500; margin-bottom: 20px; font-size: 1.3em;">⚠️ Important Disclaimers</h3>
+            
+            <div style="margin-bottom: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                <h4 style="color: #00ff00; margin-bottom: 10px;">Educational Content Only - Not Professional Advice</h4>
+                <p style="color: #999; line-height: 1.6;">
+                    SYNDICATE AI discussions are for informational and educational purposes only. 
+                    Content generated should not be considered legal, medical, financial, or professional advice. 
+                    Users should consult qualified professionals for specific guidance on important matters.
+                </p>
+            </div>
+            
+            <div style="padding: 20px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                <h4 style="color: #00ff00; margin-bottom: 10px;">Adult Platform - 18+ Only</h4>
+                <p style="color: #999; line-height: 1.6;">
+                    This service is intended for users 18 years and older. 
+                    By using SYNDICATE, you confirm that you are at least 18 years of age.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">SYNDICATE &copy; 2025 - BY IRONBARK PRODUCTIONS</p>
+        <p style="color: #606060; font-size: 0.9em; margin-top: 10px;">
+            By using this platform, you agree to our <a href="terms.html" style="color: #ff9500; text-decoration: none;">Terms and Conditions</a> and acknowledge our disclaimers above.
+        </p>
+    </footer>
+
+    <script>
+        // Stripe Configuration
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RzUlcPUyFXcw2oKI5GdMALjiyqHkdDFJKiI8L2UtbxnYxB9WhCr9lP5ILXmC7hBkOAPQXDpAv9wsdKQYMaue3tF00IOeVQMi4'; // Replace with your key!
+        
+        // Initialize Stripe (only if key is set)
+        let stripe = null;
+        if (STRIPE_PUBLISHABLE_KEY && !STRIPE_PUBLISHABLE_KEY.includes('YOUR_KEY_HERE')) {
+            stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        }
+        
+        // Payment links for different tiers
+        const PAYMENT_LINKS = {
+            transcript: 'https://buy.stripe.com/14A00i8apgV47HK0ltgQE01',  // $45
+            complete: 'https://buy.stripe.com/9B66oG0HX34e8LOgkrgQE02'      // $79.99
+        };
+        
+        // Checkout function
+        async function startCheckout(event, tier = 'transcript') {
+            event.preventDefault();
+            
+            // Use the appropriate payment link based on tier
+            const paymentLink = PAYMENT_LINKS[tier] || PAYMENT_LINKS.transcript;
+            console.log('Tier:', tier, 'Link:', paymentLink);  // Debug
+            
+            // If Stripe not configured, use the payment link
+            if (!stripe) {
+                window.location.href = paymentLink;
+                return;
+            }
+            
+            try {
+                // Create checkout session via your backend
+                const response = await fetch('/api/create-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const { checkout_url, session_id } = await response.json();
+                
+                if (checkout_url) {
+                    // Redirect to Stripe Checkout
+                    window.location.href = checkout_url;
+                } else {
+                    // Fallback to payment link
+                    window.location.href = paymentLink;
+                }
+            } catch (error) {
+                console.error('Checkout error:', error);
+                // Fallback to payment link
+                window.location.href = paymentLink;
+            }
+        }
+        
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 2 + 'px';
+            cursorDot.style.top = e.clientY - 2 + 'px';
+        });
+
+        // Cursor hover effects
+        document.querySelectorAll('a, button, .feature-card, .ai-card').forEach(element => {
+            element.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+            element.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+        });
+
+        // Hide loader after page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+            observer.observe(card);
+        });
+
+        // Observe AI cards
+        document.querySelectorAll('.ai-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+            observer.observe(card);
+        });
+
+        // Terminal typing effect on scroll
+        const terminal = document.querySelector('.terminal');
+        const terminalObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        terminalObserver.observe(terminal);
+
+        // Parallax effect for shapes
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape');
+            
+            shapes.forEach((shape, index) => {
+                const speed = 0.5 + (index * 0.2);
+                shape.style.transform = `translateY(${scrolled * speed}px) rotate(${45 + scrolled * 0.1}deg)`;
+            });
+        });
+
+        // Easter Egg: Konami Code
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    activateEasterEgg();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        function activateEasterEgg() {
+            document.body.style.animation = 'rainbow-bg 3s linear infinite';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 5000);
+        }
+
+        // Add rainbow animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rainbow-bg {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Removed auto-scroll since we're using grid layout now
+
+        // Add magnetic effect to primary buttons
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                button.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = '';
+            });
+        });
+
+        // Performance optimization: Throttle scroll events
+        let ticking = false;
+        function throttleScroll() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    // Scroll-based animations here
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        window.addEventListener('scroll', throttleScroll);
+    </script>
+</body>
+</html>
